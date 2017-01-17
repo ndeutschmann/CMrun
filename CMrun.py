@@ -29,6 +29,9 @@ class CMrun:
             print "The possible keys are: "+str(self.__dicokeys__)
         else:
             return self.SRtable[:,self.__dico__[index]]
+    def sortby(self,key):
+        ncol=self[key]
+        self.SRtable=self.SRtable[vfloat(self.SRtable[:,ncol]).argsort()]
 
 
 
