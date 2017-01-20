@@ -5,6 +5,12 @@ vfloat=np.vectorize(float)
 
 class CMrun:
     def __init__(self,name):
+        #OPEN result.txt
+        self.__file__=open(name+"/result.txt")
+        self.result=[line.rstrip().split(":")[1].lsplit() for line in self.__file__.readlines()]
+        self.__file__.close()
+        self.result=self.result[2:]
+        #OPEN complete results and put them in a table
         self.SRtable=[]
         self.__file__=open(name+"/evaluation/best_signal_regions.txt","r")
         self.__file__.readline() #Skip first line
@@ -12,10 +18,11 @@ class CMrun:
         for line in self.__file__:
             self.SRtable.append(line.rsplit())
         self.__file__.close()
+
         self.length=len(self.SRtable)
         self.SRtable=np.array(self.SRtable)
         #Sort by r-expected
-        self.SRtable=self.SRtable[vfloat(self.SRtable[:,9]).argsort()]
+        self.SRtable=self.SRtable[vfloat(self.SRtable[:,9]).argsort()[::-1]]
         #define a dictionary for columns: run['b'] gives the background column
         #run['help'] reminds you of the keys for the dictionary
         self.__dicokeys__=['analysis', 'sr', 'o', 'b', 'db', 's', 'ds', 's95obs', 's95exp', 'robscons', 'rexpcons','help']
@@ -29,9 +36,9 @@ class CMrun:
             print "The possible keys are: "+str(self.__dicokeys__)
         else:
             return self.SRtable[:,self.__dico__[index]]
-    def sortby(self,key):
+    def sortby(self,key):#Sort by [key]. Largest first
         ncol=self[key]
-        self.SRtable=self.SRtable[vfloat(self.SRtable[:,ncol]).argsort()]
+        self.SRtable=self.SRtable[vfloat(self.SRtable[:,ncol]).argsort()[::-1]]
 
 
 
