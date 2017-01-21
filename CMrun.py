@@ -7,9 +7,18 @@ class CMrun:
     def __init__(self,name):
         #OPEN result.txt
         self.__file__=open(name+"/result.txt")
-        self.result=[line.rstrip().split(":")[1].lsplit() for line in self.__file__.readlines()]
-        self.__file__.close()
-        self.result=self.result[2:]
+
+        self.result=[]
+        for line in self.__file__:
+            if line.find("Result:")!=-1:
+                self.result.append(line.split(":")[1].rstrip().lstrip())
+            elif line.find("Result for r:")!=-1:
+                self.result.append(line.split(":")[1].rstrip().lstrip())
+            elif line.find("Analysis:")!=-1:
+                self.result.append(line.split(":")[1].rstrip().lstrip())
+            elif line.find("SR:")!=-1:
+                self.result.append(line.split(":")[1].rstrip().lstrip())
+
         #OPEN complete results and put them in a table
         self.SRtable=[]
         self.__file__=open(name+"/evaluation/best_signal_regions.txt","r")
@@ -31,14 +40,14 @@ class CMrun:
     def __getitem__(self,index):
         if index not in self.__dicokeys__:
             print "Error: The possible keys are: "+str(self.__dicokeys__)
-            exit()
+            return []
         elif index=='help':
             print "The possible keys are: "+str(self.__dicokeys__)
         else:
             return self.SRtable[:,self.__dico__[index]]
     def sortby(self,key):#Sort by [key]. Largest first
-        ncol=self[key]
-        self.SRtable=self.SRtable[vfloat(self.SRtable[:,ncol]).argsort()[::-1]]
+        self.ncol=self.__dico__[key]
+        self.SRtable=self.SRtable[vfloat(self.SRtable[:,self.ncol]).argsort()[::-1]]
 
 
 
